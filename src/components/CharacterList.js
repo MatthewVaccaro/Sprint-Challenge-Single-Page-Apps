@@ -1,32 +1,31 @@
 import React, { useEffect, useState } from "react";
-import Axios from "axios";
+
 import CharacterCard from "./CharacterCard";
 
-function CharacterList() {
-  // TODO: Add useState to track data from useEffect
-  const [characterData, setCharacterData] = useState([]);
+function CharacterList(props) {
+  const [searched, setSearched] = useState([]);
 
   useEffect(() => {
-    // TODO: Add API Request here - must run in `useEffect`
-    //  Important: verify the 2nd `useEffect` parameter: the dependancies array!
-    Axios.get("https://rickandmortyapi.com/api/character/")
-      .then(res => {
-        console.log(res.data.results[0]);
-        setCharacterData(res.data.results);
-      })
-      .catch(err => {
-        console.log("error:", err);
-      });
-  }, []);
+    const filtered = props.data.filter(cv => {
+      return cv.name.includes(props.searchValue.value);
+    });
+    setSearched(filtered);
+  }, [props.isSearching]);
 
-  if (characterData === []) {
+  if (props.data === []) {
     return "";
   } else {
     return (
       <section className="character-list">
-        {characterData.map(cv => {
-          return <CharacterCard datapassed={cv} key={cv.id} />;
-        })}
+        {props.isSearching
+          ? searched.length > 0
+            ? searched.map(cv => {
+                return <CharacterCard datapassed={cv} key={cv.id} />;
+              })
+            : "No characters found!"
+          : props.data.map(cv => {
+              return <CharacterCard datapassed={cv} key={cv.id} />;
+            })}
       </section>
     );
   }

@@ -1,43 +1,31 @@
 import React, { useState, useEffect } from "react";
-import { withFormik, Form, Field } from "formik";
 
-function SearchForm(props, { status }) {
-  const [searchValue, setSearchValue] = useState();
-
-  useEffect(() => {
-    if (status) {
-      setSearchValue(status);
-    }
-  }, [status]);
-
-  function moveSearchData() {
-    props.pullSearch(searchValue);
-  }
-
-  console.log("searchValue", searchValue);
+function SearchForm(props) {
+  const { isSearching, setSearching, setSearchValue, searchValue } = props;
 
   return (
     <section className="search-form">
-      <Form>
-        <label>
-          Search
-          <Field type="text" name="search" placeholder="Search For Something" />
-        </label>
-        <button type="submit">Search</button>
-      </Form>
+      <form
+        onSubmit={e => {
+          e.preventDefault();
+          setSearching(!isSearching);
+        }}
+      >
+        <label htmlFor="search">Search:</label>
+        <input
+          type="text"
+          placeholder="Rick Sanchez"
+          value={searchValue.value}
+          onChange={e => {
+            setSearchValue({ ...searchValue, value: e.target.value });
+          }}
+        />
+        <button type="submit">
+          {isSearching ? "Clear Search " : "Search"}
+        </button>
+      </form>
     </section>
   );
 }
 
-export default withFormik({
-  mapPropsToValues: values => {
-    return {
-      search: values.search || ""
-    };
-  },
-
-  handleSubmit: (values, { setStatus }) => {
-    setStatus(values);
-    //moveSearchData();
-  }
-})(SearchForm);
+export default SearchForm;
