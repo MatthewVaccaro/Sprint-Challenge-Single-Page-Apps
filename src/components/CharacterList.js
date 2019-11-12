@@ -1,16 +1,34 @@
 import React, { useEffect, useState } from "react";
 
-export default function CharacterList() {
-  // TODO: Add useState to track data from useEffect
+import CharacterCard from "./CharacterCard";
+
+function CharacterList(props) {
+  const [searched, setSearched] = useState([]);
 
   useEffect(() => {
-    // TODO: Add API Request here - must run in `useEffect`
-    //  Important: verify the 2nd `useEffect` parameter: the dependancies array!
-  }, []);
+    const filtered = props.data.filter(cv => {
+      return cv.name.includes(props.searchValue.value);
+    });
+    setSearched(filtered);
+  }, [props.isSearching]);
 
-  return (
-    <section className="character-list">
-      <h2>TODO: `array.map()` over your state here!</h2>
-    </section>
-  );
+  if (props.data === []) {
+    return "";
+  } else {
+    return (
+      <section className="character-list">
+        {props.isSearching
+          ? searched.length > 0
+            ? searched.map(cv => {
+                return <CharacterCard datapassed={cv} key={cv.id} />;
+              })
+            : "No characters found!"
+          : props.data.map(cv => {
+              return <CharacterCard datapassed={cv} key={cv.id} />;
+            })}
+      </section>
+    );
+  }
 }
+
+export default CharacterList;
